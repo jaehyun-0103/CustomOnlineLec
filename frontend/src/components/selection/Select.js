@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "../../components/header/Navbar";
-import Background from "../../assets/img/background.png"
+import Background from "../../assets/img/Group.png"
 import { GoArrowRight } from "react-icons/go";
 import Slider from 'react-slick';
 
