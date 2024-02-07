@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Navbar from "../components/header/Navbar";
+import Background from "../assets/img/background.png"
 
 const Container = styled.div`
+  width: 100%;
+  height: 100vh;
   padding: 10px;
+  margin-top: 4rem;
+  background: url(${Background});
+  background-size: cover; /* 배경 이미지를 화면에 꽉 채우도록 설정 */
+  background-position: center; /* 배경 이미지를 가운데 정렬 */
 `;
 
 const VideoContainer = styled.div`
@@ -60,6 +68,8 @@ const VideoList = () => {
   };
 
   return (
+    <div>
+      <Navbar/>
     <Container>
       <SearchContent>
         <Search placeholder="검색"></Search>
@@ -67,7 +77,7 @@ const VideoList = () => {
       </SearchContent>
       <VideoItems>
         {videos.map((video) => (
-          <Link to={`/video/${video.id}`} key={video.id}>
+          <Link to= "/select" key={video.id}>
             <VideoContainer onClick={() => handleVideoClick(video.id, video.title, video.person)}>
               <Thumbnail src="/favicon.ico" alt="썸네일" />
               <Text>{video.title}</Text>
@@ -76,7 +86,7 @@ const VideoList = () => {
           </Link>
         ))}
       </VideoItems>
-    </Container>
+    </Container></div>
   );
 };
 
