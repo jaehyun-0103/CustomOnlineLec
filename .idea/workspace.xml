@@ -5,23 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="689c8d75-3fb5-48d8-841e-c60f44c666c7" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AI/dao/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI/dao/dao.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AI/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AI/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/AI/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AI/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI/tasks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/CustomOnlineLec.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CustomOnlineLec.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,10 +29,9 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/#3&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;backend&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/FlaskAiModelServing&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -52,12 +41,6 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\CustomOnlineLec\AI\DB" />
-      <recent name="D:\CustomOnlineLec\AI" />
-    </key>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -77,7 +60,6 @@
       <workItem from="1707288121490" duration="9000" />
       <workItem from="1707288151765" duration="1157000" />
       <workItem from="1707299130446" duration="409000" />
-      <workItem from="1707494474807" duration="1933000" />
     </task>
     <servers />
   </component>
