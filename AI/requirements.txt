@@ -1,3 +1,4 @@
+# Flask, AWS, Mysql, redis, celery 등
 Flask
 redis
 celery
@@ -10,6 +11,10 @@ pymysql
 moviepy
 flask_restx
 
+# Whisper
+# pip install git+https://github.com/openai/whisper.git@248b6cb124225dd263bb9bd32d060b6517e067f8
+
+# RVC
 fairseq==0.12.2
 faiss-cpu==1.7.3
 ffmpeg-python>=0.2.0

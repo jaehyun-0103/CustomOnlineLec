@@ -3,6 +3,8 @@ import os, boto3, tempfile, shutil, jsonify, subprocess, re
 from dotenv import load_dotenv
 from moviepy.editor import VideoFileClip, AudioFileClip
 
+# import whisper, json
+
 
 load_dotenv()
 
@@ -57,6 +59,9 @@ def process_uploaded_file(s3_url, RVC_model):
         # 음성 추출
         local_audio_path = extract_audio(temp_dir, local_video_path)
 
+        # Whisper STT로 문장 단위 자막 JSON 파일 생성(subtitle = JSON 형식 자막 파일 경로)
+        subtitle = STT(local_audio_path, temp_dir)
+
         # RVC 변환(return 변환 음성 저장 경로)
         # convert_voice_path = execute_voice_conversion(RVC_model, local_audio_path)
         convert_voice_path = local_audio_path
@@ -85,7 +90,8 @@ def process_uploaded_file(s3_url, RVC_model):
         else:
             result.append("임시 디렉토리의 파일이 삭제되었습니다.")
 
-    return convert_video_path_s3
+    # 음성 변환 영상 s3 경로와 문장 단위 JSON 파일 return
+    return convert_video_path_s3, subtitle
 
 
 # 강의 영상에서 음성 추출
@@ -256,3 +262,20 @@ def execute_voice_conversion(model_name, local_file_dir):
     process.wait()
 
     return cover_path
+
+@celery.task
+def STT(local_audio_path, tmp_path):
+    model = whisper.load_model("medium")
+    sentence_result = model.transcribe(local_audio_path)
+
+    # Whisper로 추출한 text에서 문장과 timestamp만 추출
+    for each in sentence_result['segments'][1:]:
+        # print (word['word'], "  ",word['start']," - ",word['end'])
+        sentencelevel_info.append({'text': each['text'], 'start': each['start'], 'end': each['end']})
+
+    # 위에서 추출한 sentencelevel_info를 JSON 파일로 만들기
+    subtitle = os.path.join(tmp_path, 'temp_sentence.json')
+    with open(subtitle, 'w') as f:
+        json.dump(sentencelevel_info, f, indent=4)
+
+    return subtitle

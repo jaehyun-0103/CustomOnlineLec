@@ -9,6 +9,9 @@ from flask_restx import Api, Resource, fields
 
 app = Flask(__name__)
 
+# DAO 객체 생성
+video_dao = VideoDao()
+
 # swagger
 api = Api(app, version='1.0', title='Flask API 문서', description='Swagger 문서', doc="/api-docs")
 
@@ -20,9 +23,6 @@ upload_model = api.model('UploadModel', {
     'url': fields.String(required=True, description='S3 경로', help='S3 경로는 필수'),
     'RVC_model': fields.String(required=True, description='rvc 모델 이름', help='모델 이름은 필수')
 })
-
-# DAO 객체 생성
-video_dao = VideoDao()
 
 @ai_serving_api.route('')
 class ConvertVoice(Resource):
@@ -41,7 +41,8 @@ class ConvertVoice(Resource):
             RVC_model = request.json['RVC_model']
 
             # celery 비동기 처리
-            convert_file_path_s3 = process_uploaded_file.delay(original_video_s3_path, RVC_model).get()
+            result  = process_uploaded_file.delay(original_video_s3_path, RVC_model).get()
+            convert_file_path_s3, subtitle = result
 
             # Spring에서 보낸 Video 테이블의 id
             video_id = request.json['video_id']
@@ -49,8 +50,8 @@ class ConvertVoice(Resource):
             # DB와 연결
             connection = get_connection(DB)
 
-            # video_id에 해당하는 레코드에 convert_file_path_s3 저장
-            video_dao.update_video_s3_path(connection, video_id, convert_file_path_s3)
+            # video_id에 해당하는 레코드에 convert_file_path_s3, subtitle 저장
+            video_dao.update_video_s3_path(connection, video_id, convert_file_path_s3, subtitle)
 
             # DB와 연결 해제
             connection.close()
