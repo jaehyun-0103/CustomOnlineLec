@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaPencilAlt } from "react-icons/fa";
+import Navbar from "../components/header/Navbar";
 
 const Container = styled.div`
   margin-right: 100px;
   margin-left: 100px;
+  margin-top: 4rem;
 `;
 
 const SubTitle = styled.p`
@@ -157,7 +159,10 @@ const MyPage = () => {
   };
 
   return (
+  <div>
+  <Navbar/>
     <Container>
+      
       <SubTitle>User Profile</SubTitle>
       <ProfileContainer>
         <ProfileImageContainer>
@@ -201,7 +206,7 @@ const MyPage = () => {
           </ListLink>
         </MoreButton>
       </UploadListContainer>
-    </Container>
+    </Container></div>
   );
 };
 
