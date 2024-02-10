@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
 import styled from "styled-components";
+import Navbar from "../../components/header/Navbar";
 
 const Container = styled.div`
   display: flex;
+  margin-top: 4rem;
 `;
 
 const SidebarContainer = styled.nav`
@@ -95,6 +97,7 @@ const Modify = () => {
 
   return (
     <Container>
+      <Navbar/>
       <Sidebar />
       <SidebarContainer></SidebarContainer>
       <ModifyContainer>

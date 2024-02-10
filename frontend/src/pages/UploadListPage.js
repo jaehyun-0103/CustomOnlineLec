@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Navbar from "../components/header/Navbar";
 
 const Container = styled.div`
   padding: 40px;
+  margin-top: 4rem;
 `;
 
 const VideoContainer = styled.div`
@@ -52,6 +54,7 @@ const UploadList = () => {
 
   return (
     <Container>
+      <Navbar/>
       {videos.map((video) => (
         <Link to={`/video/${video.id}`} key={video.id}>
           <VideoContainer onClick={() => handleVideoClick(video.id, video.title, video.person)}>
