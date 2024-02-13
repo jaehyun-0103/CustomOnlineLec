@@ -95,22 +95,17 @@ public class SecurityConfig {
             http
                     .httpBasic((auth) -> auth.disable());
 
-            //경로별 인가 작업
-            http
 
-                    .authorizeHttpRequests((auth) -> auth
-                            //login, /, join은 모든 권한 허용
-                            .requestMatchers("/login", "/", "/join").permitAll()
-                            //admin 경로는 admin이라는 권한 가진 사용자만 접근
-                            .requestMatchers("/admin").hasRole("ADMIN")
-                            //.requestMatchers(PathRequest.toH2Console()).permitAll()
-                            .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
-                            //그 외 다른 요청은 로그인한 사용자만 접근가능
-                            .anyRequest().authenticated())
-                    /**.headers((headers) -> headers
-                            .addHeaderWriter(new XFrameOptionsHeaderWriter(
-                                    XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
-                  */   ;
+        //경로별 인가 작업
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        //login, /, join은 모든 권한 허용
+                        .requestMatchers("/login", "/", "/join", "/videos/upload", "/v3/**", "/swagger-ui/**").permitAll()
+                        //admin 경로는 admin이라는 권한 가진 사용자만 접근
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        //그 외 다른 요청은 로그인한 사용자만 접근가능
+                        .anyRequest().authenticated());
+
 
 
             //JWTFilter 등록
