@@ -1,6 +1,5 @@
 package com.example.CustomLecture.config;
 
-
 import com.example.CustomLecture.jwt.JWTFilter;
 import com.example.CustomLecture.jwt.JWTUtil;
 import com.example.CustomLecture.jwt.LoginFilter;
@@ -23,7 +22,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import java.util.Collections;
 
 import static org.springframework.web.servlet.function.RequestPredicates.headers;
-
 
 @Configuration
 @EnableWebSecurity
@@ -105,13 +103,14 @@ public class SecurityConfig {
                             .requestMatchers("/login", "/", "/join").permitAll()
                             //admin 경로는 admin이라는 권한 가진 사용자만 접근
                             .requestMatchers("/admin").hasRole("ADMIN")
-                            .requestMatchers(PathRequest.toH2Console()).permitAll()
-
+                            //.requestMatchers(PathRequest.toH2Console()).permitAll()
+                            .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
                             //그 외 다른 요청은 로그인한 사용자만 접근가능
                             .anyRequest().authenticated())
-                    .headers((headers) -> headers
+                    /**.headers((headers) -> headers
                             .addHeaderWriter(new XFrameOptionsHeaderWriter(
-                                    XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)));
+                                    XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                  */   ;
 
 
             //JWTFilter 등록
