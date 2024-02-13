@@ -63,7 +63,7 @@ const Button = styled.button`
 `;
 
 const Navbar = () => {
-  const token = sessionStorage.getItem('login_token');
+  const token = sessionStorage.getItem('token');
 
   return (
     <NavBarBackGround>
@@ -75,7 +75,7 @@ const Navbar = () => {
         <NavItem to="/">Home</NavItem>
         <NavItem to="/attach">강의 업로드</NavItem>
         <NavItem to="/videoList">강의 목록</NavItem>
-        {token?  (
+        {token ? (
           <NavItem to="/mypage">마이페이지</NavItem>
         ) : (
           <>

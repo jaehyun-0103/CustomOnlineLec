@@ -8,7 +8,6 @@ import button1 from "../assets/img/button1.png";
 import { GoArrowRight } from "react-icons/go";
 import { Link , useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { saveLoginTokenToSessionStorage } from '../state/session';
 
 
 const LogoImage = styled.img.attrs({
@@ -100,7 +99,7 @@ const LoginButton = styled.button`
   color: #FFFFFF;
 `;
 
-const LoginPage = () => {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -111,10 +110,11 @@ const LoginPage = () => {
         username,
         password
       });
-      const { token } = response.data; // 서버에서 전달된 JWT 토큰
-      saveLoginTokenToSessionStorage(token); // 토큰을 세션 스토리지에 저장
+      const { token } = response.data; 
+      sessionStorage.setItem('token', token); 
       console.log('로그인 요청 성공:', response.data); // 로그인 요청 성공 시 콘솔에 응답 데이터 출력
       showToast("로그인 성공");
+      navigate("/");
     } catch (error) {
       console.error('로그인 요청 실패:', error); // 로그인 요청 실패 시 오류 메시지 콘솔에 출력
     }
@@ -122,7 +122,6 @@ const LoginPage = () => {
 
   const showToast = (message) => {
     alert(message); // 간단히 alert로 표시
-    navigate("/");
   };
 
   return (
@@ -164,5 +163,3 @@ const LoginPage = () => {
     </div>
   );
 }
-
-export default LoginPage;
