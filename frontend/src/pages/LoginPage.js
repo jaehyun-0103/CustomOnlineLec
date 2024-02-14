@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { GoArrowRight } from "react-icons/go";
 import axios from "axios";
-
+import Swal from "sweetalert2";
 import logo from "../assets/img/UUJJ.png";
 import Background from "../assets/img/Group.png";
 import GoogleLogin from "../assets/img/Google login.png";
@@ -131,18 +131,46 @@ export default function Login() {
         username,
         password,
       });
-      const { token } = response.data;
+      const { token, user_name, pass_word } = response.data;
       sessionStorage.setItem("token", token);
-      console.log("로그인 요청 성공:", response.data); // 로그인 요청 성공 시 콘솔에 응답 데이터 출력
-      showToast("로그인 성공");
-      navigate("/");
+      sessionStorage.setItem("username", user_name);
+      sessionStorage.setItem("password", pass_word);
+      showToast();
+      
     } catch (error) {
-      console.error("로그인 요청 실패:", error); // 로그인 요청 실패 시 오류 메시지 콘솔에 출력
+      console.error("로그인 요청 실패:", error.response.data); // 서버에서 전달한 에러 메시지 출력
+      if (error.response.status === 401) {
+        showToastError("입력값이 올바르지 않습니다.");
+      } else {
+        // 기타 예외 처리
+        showToastError("로그인 중 오류가 발생했습니다.");
+      }
     }
   };
 
-  const showToast = (message) => {
-    alert(message); // 간단히 alert로 표시
+  const showToast = () => {
+    Swal.fire({
+      icon: "success",
+      title: "로그인 성공",
+      toast: true,
+      position: "center",
+      showConfirmButton: false,
+      timer: 1000,
+    }).then(() => {
+      navigate("/");
+    });
+  };
+  
+  const showToastError = (message) => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 실패",
+      text: message,
+      toast: true,
+      position: "center",
+      showConfirmButton: false,
+      timer: 2000,
+    });
   };
 
   return (
@@ -168,11 +196,10 @@ export default function Login() {
 
             <TextInfo>비밀번호</TextInfo>
             <InfoInput autoComplete="on" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-            <GradientButton onClick={handleLogin}>로그인</GradientButton>
           </ContentContainer>
         </BoxContainer>
       </form>
+      <GradientButton onClick={handleLogin}>로그인</GradientButton>
     </LoginContainer>
   );
 }
