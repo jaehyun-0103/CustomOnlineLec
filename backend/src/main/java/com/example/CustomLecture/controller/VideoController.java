@@ -1,7 +1,9 @@
 package com.example.CustomLecture.controller;
 
+import com.example.CustomLecture.dto.Request.VideoConvertRequestDTO;
 import com.example.CustomLecture.dto.Request.VideoSaveRequestDTO;
 import com.example.CustomLecture.service.VideoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -43,17 +45,16 @@ public class VideoController {
 
     @PostMapping("/uploadVideo")
     @Operation(summary = "강의 영상 업로드", description = "강의 영상을 보내주세요.")
-    public ResponseEntity<String> convertVideo(@RequestBody String videoS3Path) {
+    public ResponseEntity<String> convertVideo(@RequestBody VideoConvertRequestDTO videoConvertRequestDTO) {
 
         try {
-            String responseBody = videoService.convertVideo(videoS3Path);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String requestBody = objectMapper.writeValueAsString(videoConvertRequestDTO);
+            String responseBody = videoService.convertVideo(requestBody);
             return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
         }
     }
-
-
-
 }
