@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 import logo from "../assets/img/UUJJ.png";
 import Background from "../assets/img/Group.png";
@@ -118,45 +119,54 @@ export default function RegisterPage() {
 
   const handleRegister = async () => {
     try {
-      await axios.post("/join", {
+      const response = await axios.post("/join", {
         nickname,
         username,
         password,
       });
-
-      console.log("회원가입 요청 성공"); // 요청 성공 시 콘솔 로그 추가
-      showToast1("회원가입이 성공적으로 완료되었습니다.");
+  
+      console.log("회원가입 요청 성공");
+      showToast();
     } catch (error) {
-      console.error("회원가입 요청 실패:", error); // 요청 실패 시 오류 메시지 콘솔에 출력
-      console.log(error);
+      console.error("회원가입 요청 실패:", error.response.data); // 서버에서 전달한 에러 메시지 출력
+      if (error.response.status === 500) {
+        showToastError("입력값이 올바르지 않습니다.");
+      } else if (error.response.status === 409) {
+        // 중복된 사용자 이름 예외 처리
+        showToastError("이미 존재하는 사용자 이름 또는 닉네임입니다.");
+      } else {
+        // 기타 예외 처리
+        showToastError("회원가입 중 오류가 발생했습니다.");
+      }
     }
   };
-
-  const showToast1 = (message) => {
-    const toast = document.createElement("div");
-    toast.textContent = message;
-    toast.style.position = "fixed";
-    toast.style.bottom = "20px";
-    toast.style.left = "50%";
-    toast.style.transform = "translateX(-50%)";
-    toast.style.padding = "10px 20px";
-    toast.style.backgroundColor = "rgba(255, 0, 0, 0.8)";
-    toast.style.color = "#fff";
-    toast.style.borderRadius = "5px";
-    toast.style.zIndex = "9999";
-    toast.style.transition = "opacity 0.3s ease";
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 300);
-    }, 2000);
-
-    navigate("/login");
+  
+  const showToastError = (message) => {
+    Swal.fire({
+      icon: "error",
+      title: "회원가입 실패",
+      text: message,
+      toast: true,
+      position: "center",
+      showConfirmButton: false,
+      timer: 2000,
+    });
   };
+
+  const showToast = () => {
+    Swal.fire({
+      icon: "success",
+      title: '회원가입 성공',
+      toast: true,
+      position: "center",
+      showConfirmButton: false,
+      timer: 1000,
+    }).then(() => {
+      navigate("/login");
+    });
+  };
+
+
 
   return (
     <RegistContainer>
@@ -181,10 +191,10 @@ export default function RegisterPage() {
             <TextInfo>닉네임</TextInfo>
             <InfoInput type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
 
-            <GradientButton onClick={handleRegister}>회원가입</GradientButton>
           </ContentContainer>
         </BoxContainer>
       </form>
+      <GradientButton onClick={handleRegister}>회원가입</GradientButton>
     </RegistContainer>
   );
 }
