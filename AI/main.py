@@ -4,6 +4,8 @@ from DB.config import DB
 from DB.connection import get_connection
 from dao.dao import VideoDao
 import os, tempfile, boto3, shutil
+from datetime import datetime
+
 # import whisper
 
 # swagger
@@ -49,6 +51,7 @@ class ConvertVoice(Resource):
         """
         try:
             # json_data = request.json
+            user_id = request.json['userId']
             original_video_s3_path = request.json['url']
             RVC_model = request.json['RVC_model']
 
@@ -81,10 +84,7 @@ class ConvertVoice(Resource):
             # local_audio_path = extract_audio(temp_dir, local_video_path)
 
 
-            # RVC 음성 변환(celery 비동기)
-            # convert_file_path_s3 = process_uploaded_file.delay(temp_dir, local_video_path, local_audio_path, RVC_model).get()
-            convert_file_path_s3 = process_uploaded_file.delay(convert_voice_path
-                                                               , local_video_path, local_audio_path, RVC_model)
+
 
             # 자막 추출(Flask 동기)
             # Whisper STT로 문장 단위 JSON 형식 자막
@@ -103,8 +103,19 @@ class ConvertVoice(Resource):
             # DB와 연결
             connection = get_connection(DB)
 
+            # 현재 시간을 가져옵니다.
+            current_time = datetime.now()
+
+            # DATE 형식에 맞게 변환합니다.
+            date = current_time.strftime('%Y-%m-%d')
+
             # DB에 convert_file_path_s3 저장
-            video_id = video_dao.update_video_s3_path(connection, convert_file_path_s3)
+            video_id = video_dao.update_video_s3_path(connection, date, user_id)
+
+            # RVC 음성 변환(celery 비동기)
+            # convert_file_path_s3 = process_uploaded_file.delay(temp_dir, local_video_path, local_audio_path, RVC_model).get()
+            convert_file_path_s3 = process_uploaded_file.delay(convert_voice_path
+                                                               , local_video_path, local_audio_path, RVC_model, video_id)
 
             # DB와 연결 해제
             connection.close()

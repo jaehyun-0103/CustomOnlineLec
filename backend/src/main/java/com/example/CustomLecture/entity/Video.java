@@ -20,7 +20,7 @@ public class Video {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private UserEntity member;
 
     private String title;
@@ -35,8 +35,8 @@ public class Video {
     @Column(unique = true)
     private String originalS3Path;
 
-    @Column(unique = true)
-    private String convertS3Path;
+//    @Column(unique = true)
+//    private String convertS3Path;
 
     @Column(unique = true)
     private String subtitleS3Path;
