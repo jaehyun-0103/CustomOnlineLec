@@ -2,16 +2,27 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "../components/header/Navbar";
-import Background from "../assets/img/Group.png"
+import Background from "../assets/img/Group.png";
 
-const Container = styled.div`
-  width: 100%;
+const ListContainer = styled.div`
+  display: flex;
+`;
+
+const PageBackGround = styled.div`
+  position: absolute;
+  width: 100vw;
   height: 100vh;
-  padding: 10px;
-  margin-top: 4rem;
-  background: url(${Background});
-  background-size: cover;
-  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(${Background});
+  background-size: 100% 100%;
+  background-position: center center;
+  z-index: -1;
+`;
+
+const ContentContainer = styled.div`
+  padding: 75px;
 `;
 
 const VideoContainer = styled.div`
@@ -26,8 +37,7 @@ const VideoContainer = styled.div`
   margin: 0 10px 10px 0;
 `;
 
-const SearchContent = styled.div`
-`;
+const SearchContent = styled.div``;
 
 const Search = styled.input``;
 
@@ -68,25 +78,27 @@ const VideoList = () => {
   };
 
   return (
-    <div>
-      <Navbar/>
-    <Container>
-      <SearchContent>
-        <Search placeholder="검색"></Search>
-        <FilterButton>필터링</FilterButton>
-      </SearchContent>
-      <VideoItems>
-        {videos.map((video) => (
-          <Link to= "/select" key={video.id}>
-            <VideoContainer onClick={() => handleVideoClick(video.id, video.title, video.person)}>
-              <Thumbnail src="/favicon.ico" alt="썸네일" />
-              <Text>{video.title}</Text>
-              <Text>{video.person}</Text>
-            </VideoContainer>
-          </Link>
-        ))}
-      </VideoItems>
-    </Container></div>
+    <ListContainer>
+      <Navbar />
+      <PageBackGround />
+      <ContentContainer>
+        <SearchContent>
+          <Search placeholder="검색"></Search>
+          <FilterButton>필터링</FilterButton>
+        </SearchContent>
+        <VideoItems>
+          {videos.map((video) => (
+            <Link to="/select" key={video.id}>
+              <VideoContainer onClick={() => handleVideoClick(video.id, video.title, video.person)}>
+                <Thumbnail src="/favicon.ico" alt="썸네일" />
+                <Text>{video.title}</Text>
+                <Text>{video.person}</Text>
+              </VideoContainer>
+            </Link>
+          ))}
+        </VideoItems>
+      </ContentContainer>
+    </ListContainer>
   );
 };
 
