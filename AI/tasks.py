@@ -2,6 +2,8 @@ from celery import Celery
 import os, boto3, jsonify, subprocess, re
 from dotenv import load_dotenv
 from moviepy.editor import VideoFileClip, AudioFileClip
+from DB.connection import get_connection
+from dao.dao import VideoDao
 
 
 load_dotenv()
@@ -11,11 +13,20 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 S3_BUCKET = os.environ.get('S3_BUCKET')
 
+DB = {
+    'host': os.environ["DB_HOST"],
+    'port': os.environ["DB_PORT"],
+    'user': os.environ["DB_USER"],
+    'password': os.environ["DB_PASSWORD"],
+    'database': os.environ["DB_DATABASE"],
+    'charset': 'utf8'
+}
+
 celery = Celery('FlaskAiModelServing', broker='redis://127.0.0.1:6379/0', backend='redis://127.0.0.1:6379/0')
 
 
 @celery.task
-def process_uploaded_file(convert_voice_path, local_video_path, local_audio_path, RVC_model):
+def process_uploaded_file(convert_voice_path, local_video_path, local_audio_path, RVC_model, video_id):
 
     result = []
 
@@ -40,6 +51,17 @@ def process_uploaded_file(convert_voice_path, local_video_path, local_audio_path
     else:
         result.append("파일 업로드 실패")
 
+    # DAO 객체 생성
+    video_dao = VideoDao()
+
+    # DB와 연결
+    connection = get_connection(DB)
+
+    # DB에 convert_file_path_s3 저장
+    video_dao.add_convert_s3_path(connection, video_id, convert_video_path_s3)
+
+    # DB와 연결 해제
+    connection.close()
 
     # 음성 변환 영상 s3 경로 return
     return convert_video_path_s3

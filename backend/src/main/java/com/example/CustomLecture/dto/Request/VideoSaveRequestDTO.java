@@ -20,6 +20,7 @@ public class VideoSaveRequestDTO {
     private String subject;
     private String thumbnailS3Path;
     private String lectureMaterialsS3Path;
+
 //    private String subtitleS3Path;
 
 
