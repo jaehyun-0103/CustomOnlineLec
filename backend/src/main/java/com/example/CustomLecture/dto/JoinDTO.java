@@ -20,7 +20,6 @@ public class JoinDTO {
 
         this.username = username;
         this.password = password;
-
         this.nickname = nickname;
     }
 

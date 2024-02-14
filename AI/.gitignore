@@ -1,5 +1,4 @@
 # 가상 환경 제외
 venv/
 .env
-DB/config.py
 .idea/
