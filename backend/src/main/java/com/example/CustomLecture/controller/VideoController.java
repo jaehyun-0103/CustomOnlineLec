@@ -2,10 +2,8 @@ package com.example.CustomLecture.controller;
 
 import com.example.CustomLecture.dto.Request.VideoSaveRequestDTO;
 import com.example.CustomLecture.service.VideoService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 // swagger
@@ -21,10 +19,12 @@ public class VideoController {
     // 생성자 주입
     private final VideoService videoService;
 
+
+
     /**
      * 강의 영상 업로드 및 음성 변환
      */
-    @PostMapping("/upload")
+    @PostMapping("/uploadInfo")
     @Operation(summary = "강의 영상 정보 업로드", description = "강의 영상 정보를 DB에 저장합니다.")
     public ResponseEntity<String> uploadVideoInfo(@RequestBody VideoSaveRequestDTO videoSaveRequestDTO) {
 
@@ -40,4 +40,20 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    @PostMapping("/uploadVideo")
+    @Operation(summary = "강의 영상 업로드", description = "강의 영상을 보내주세요.")
+    public ResponseEntity<String> convertVideo(@RequestBody String videoS3Path) {
+
+        try {
+            String responseBody = videoService.convertVideo(videoS3Path);
+            return ResponseEntity.ok(responseBody);
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+        }
+    }
+
+
+
 }

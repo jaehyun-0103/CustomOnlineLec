@@ -50,10 +50,11 @@ class ConvertVoice(Resource):
         }
         """
         try:
-            # json_data = request.json
+            json_data = request.json
+            print(json_data)
             user_id = request.json['userId']
             original_video_s3_path = request.json['url']
-            RVC_model = request.json['RVC_model']
+            RVC_model = request.json['rvcModel']
 
 
             # s3 연결 및 객체 생성

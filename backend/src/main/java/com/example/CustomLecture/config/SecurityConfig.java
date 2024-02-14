@@ -100,7 +100,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         //login, /, join은 모든 권한 허용
-                        .requestMatchers("/login", "/", "/join", "/videos/upload", "/v3/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/login", "/", "/join", "/videos/uploadInfo", "/videos/uploadVideo", "/v3/**", "/swagger-ui/**").permitAll()
                         //admin 경로는 admin이라는 권한 가진 사용자만 접근
                         .requestMatchers("/admin").hasRole("ADMIN")
                         //그 외 다른 요청은 로그인한 사용자만 접근가능
