@@ -1,124 +1,157 @@
-import React from 'react'
+import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import Navbar from "../../components/header/Navbar";
-import Background from "../../assets/img/Group.png"
 import { GoArrowRight } from "react-icons/go";
-import Slider from 'react-slick';
+import Slider from "react-slick";
+
+import Navbar from "../../components/header/Navbar";
+import Background from "../../assets/img/Group.png";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const Container = styled.div`
-  width: 100%;
-  height: 100vh;
-  padding: 10px;
-  margin-top: 4rem;
-  background: url(${Background});
-  background-size: cover;
-  background-position: center;
+const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
+
+const PageBackGround = styled.div`
+  display: flex;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-image: url(${Background});
+  background-size: 100% 100%;
+  background-position: center center;
+  z-index: -1;
+`;
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+`;
+
+const Selection = styled.div`
+  diplay: flex;
+  margin-top: 60px;
+`;
+
+const SelectText = styled.p`
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 15px;
+  margin-left: 12px;
+`;
+
 const CustomSlider = styled(Slider)`
-position: relative;
-left: -30px;
-width: 800px;
-margin: 0 auto;
+  width: 800px;
 
-.slick-list {
-  height: 160px;
-}
+  .slick-list {
+    height: 160px;
+    width: 100%;
+  }
 
-.slick-slide {
-  height: 150px;
-  margin-left: 20px;
-  margin: 0 10px;
-  border: 1px solid #1B78DA;
-}
-.slick-track {
+  .slick-slide {
+    height: 150px;
+    margin: 0 10px;
+    border: 1px solid #1b78da;
+    padding: 1px;
+  }
+  .slick-track {
     display: flex;
   }
 `;
 
-const Font = styled.div`
-diplay: flex;
-position: absolute;
-font-family: 'Inter';
-font-style: normal;
-font-weight: 600;
-font-size: 18px;
-line-height: 24px;
-`;
-
-const UnderlinedText = styled.span`
-  border-bottom: 1px solid #1B78BA;
-  padding-bottom: 2px; 
-`;
-
-const Img= styled.img`
+const Img = styled.img`
   max-width: 100%;
   max-height: 125px;
   margin-bottom: 5px;
 `;
 
+const Name = styled.div`
+  diplay: flex;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 15px;
+`;
+
+const NextButton = styled(Link)`
+  text-decoration: none;
+  font-family: "Inter";
+  font-size: 16px;
+  line-height: 22px;
+  color: black;
+  align-self: flex-end;
+  margin-top: 30px;
+`;
+
 const settings = {
-    dots: true,
-    infinite: true,
-    slidesToShow: 3,
-    slidesToScroll: 1
+  dots: true,
+  infinite: true,
+  slidesToShow: 3,
+  slidesToScroll: 1,
 };
 
-  const voices = [
-    { name: "음성1", img:'https://via.placeholder.com/150'},
-    { name: "음성2", img:'https://via.placeholder.com/150'},
-    { name: "음성3", img:'https://via.placeholder.com/150'},
-    { name: "음성4", img:'https://via.placeholder.com/150'},
-    { name: "음성5", img:'https://via.placeholder.com/150'},
-    { name: "음성6", img:'https://via.placeholder.com/150'}
+const voices = [
+  { name: "음성1", img: "https://via.placeholder.com/150" },
+  { name: "음성2", img: "https://via.placeholder.com/150" },
+  { name: "음성3", img: "https://via.placeholder.com/150" },
+  { name: "음성4", img: "https://via.placeholder.com/150" },
+  { name: "음성5", img: "https://via.placeholder.com/150" },
+  { name: "음성6", img: "https://via.placeholder.com/150" },
 ];
 
-  const avatars = [
-    { name: "아바타1", img:'https://via.placeholder.com/150'},
-    { name: "아바타2", img:'https://via.placeholder.com/150'},
-    { name: "아바타3", img:'https://via.placeholder.com/150'},
-    { name: "아바타4", img:'https://via.placeholder.com/150'},
-    { name: "아바타5", img:'https://via.placeholder.com/150'},
-    { name: "아바타6", img:'https://via.placeholder.com/150'}
-  ];
+const avatars = [
+  { name: "아바타1", img: "https://via.placeholder.com/150" },
+  { name: "아바타2", img: "https://via.placeholder.com/150" },
+  { name: "아바타3", img: "https://via.placeholder.com/150" },
+  { name: "아바타4", img: "https://via.placeholder.com/150" },
+  { name: "아바타5", img: "https://via.placeholder.com/150" },
+  { name: "아바타6", img: "https://via.placeholder.com/150" },
+];
 
-const Select = () =>  {
+const Select = () => {
   return (
-    <div>
-    <Navbar/>
-    <Container>
-        <Font style={{ left: '45%', top: '110px'}}>
-            음성 선택
-        </Font>
-        <CustomSlider style={{top: "100px"}} {...settings}>
-        {voices.map((voice) => (
-         <div key={voice.name}>
-         <Img src={voice.img}/>
-         <Font>{voice.name}</Font>
-       </div>
-        ))} 
-       </CustomSlider>
-        <Font style={{ left: '44.5%', top: '370px'}}>
-            아바타 선택
-        </Font>
-        <CustomSlider style={{top: "200px"}} {...settings}>
-        {avatars.map((avatar) => (
-         <div key={avatar.index}>
-         <Img src={avatar.img}/>
-         <Font>{avatar.name}</Font>
-       </div>
-        ))} 
-       </CustomSlider>
-        <Font style={{right: '100px', bottom: '50px', fontSize:"14px"}}>
-        <Link style={{ textDecoration: 'none', color: 'black' }} to="/video/:id">
-        <UnderlinedText>다음</UnderlinedText> <GoArrowRight/>
-        </Link>
-      </Font>
-    </Container>
-    </div>
+    <SelectContainer>
+      <Navbar />
+      <PageBackGround />
+      <ContentContainer>
+        <Selection>
+          <SelectText>음성 선택</SelectText>
+          <CustomSlider {...settings}>
+            {voices.map((voice) => (
+              <div key={voice.name}>
+                <Img src={voice.img} />
+                <Name>{voice.name}</Name>
+              </div>
+            ))}
+          </CustomSlider>
+        </Selection>
+
+        <Selection>
+          <SelectText>아바타 선택</SelectText>
+          <CustomSlider {...settings}>
+            {avatars.map((avatar) => (
+              <div key={avatar.index}>
+                <Img src={avatar.img} />
+                <Name>{avatar.name}</Name>
+              </div>
+            ))}
+          </CustomSlider>
+        </Selection>
+
+        <NextButton to="/video/:id">
+          다음 <GoArrowRight />
+        </NextButton>
+      </ContentContainer>
+    </SelectContainer>
   );
 };
 
