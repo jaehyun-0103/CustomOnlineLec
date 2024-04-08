@@ -1,29 +1,32 @@
 # 가져올 이미지를 정의
-FROM node:20
-# 경로 설정하기
+FROM node:alpine as build
+# # 경로 설정하기
 WORKDIR /frontend
-# package.json 워킹 디렉토리에 복사 (.은 설정한 워킹 디렉토리를 뜻함)
-COPY package.json .
+# # package.json을 컨테이너의 frontend 디렉토리에 복사 (.은 설정한 워킹 디렉토리를 뜻함)
+COPY package.json /frontend/package.json
+
 # 명령어 실행 (의존성 설치)
 RUN yarn install
-
-#RUN npm install -g cross-env
-
-# 필요한 패키지 설치
-#RUN npm install -g parcel-bundler
-
-# ubuntu에서 사용할 코드
-# yarn install --production=false
-# RUN npm install -g cross-env
 
 # 현재 디렉토리의 모든 파일을 도커 컨테이너의 워킹 디렉토리에 복사한다.
 COPY . .
 
-# 각각의 명령어들은 한줄 한줄씩 캐싱되어 실행된다.
-# package.json의 내용은 자주 바뀌진 않을 거지만
-# 소스 코드는 자주 바뀌는데
-# npm install과 COPY . . 를 동시에 수행하면
-# 소스 코드가 조금 달라질때도 항상 npm install을 수행해서 리소스가 낭비된다.
+# npm start는 개발시 코드 변경 사항을 실시간으로 반영하기 위해 쓰는 것이고
+# npm run build는 배포시에 사용하는 것
+RUN npm run build
+# CMD ["npm", "run", "build"]
+# RUN npm start
 
-# npm start 스크립트 실행
-CMD ["npm", "start"]
+FROM nginx:latest
+
+# Nginx는 /usr/share/nginx/html를 기본적으로 웹 서버의 루트 디렉토리로 사용
+# 위에서 build해서 생긴 /frontend/build를 nginx 웹 서버의 /usr/share/nginx/html로 복사(react를 nginx로 실행)
+COPY --from=build /frontend/build /usr/share/nginx/html
+
+RUN rm /etc/nginx/nginx.conf
+# (로컬)nginx.conf 파일 / (컨테이너) etc/nginx/conf.d/default.conf로 복사
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
+# 80포트 오픈하고 nginx 실행
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,6 +1,64 @@
 version: '3.9'
 
 services:
+  nginx_react:
+    container_name: nginx_react
+    env_file:
+      - ./frontend/.env
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    # volumes:
+    #   - ./frontend/dist:/frontend/dist
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - springboot
+      # - flask
+    networks:
+      - custom_network
+  # mysql:
+  #   container_name: mysql
+  #   image: "mysql:8"  # 원하는 MySQL 버전으로 변경할 수 있습니다.
+  #   environment:
+  #     MYSQL_DATABASE: customdb  # 생성할 데이터베이스 이름
+  #     MYSQL_ROOT_HOST: '%'
+  #     MYSQL_ROOT_PASSWORD: 0000  # root 사용자의 비밀번호 설정
+  #     MYSQL_USER: user  # 생성할 사용자 이름
+  #     MYSQL_PASSWORD: 0000  # 생성할 사용자의 비밀번호
+  #     TZ: 'Asia/Seoul'
+  #   # volumes:
+  #   #   - ./mysql/conf.d:/etc/mysql/conf.d/ # MySQL 설정 파일 위치
+  #   ports:
+  #     - "3305:3306"  # 필요에 따라 포트 변경 가능
+  #   command:
+  #     - --character-set-server=utf8mb4
+  #     - --collation-server=utf8mb4_unicode_ci
+  #   restart: always
+  #   networks:
+  #     - custom_network
+
+  springboot:
+    container_name: springboot
+    # Spring Boot 서버 설정
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      # volumes:
+      # - ./backend:/backend
+    # environment:
+    #   SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3305/customdb?useSSL=false&allowPublicKeyRetrieval=true
+    #   SPRING_DATASOURCE_USERNAME: "user"
+    #   SPRING_DATASOURCE_PASSWORD: "0000"
+    restart: always
+    # depends_on:
+    #   - mysql
+    ports:
+      - "8080:8080"
+    networks:
+      - custom_network
+
   flask:
     container_name: flask
     # 환경 설정 부분
@@ -15,7 +73,7 @@ services:
     volumes:
       - ./AI:/AI
     command: sh -c "python main.py && gunicorn", "main:app", "-b", "0.0.0.0:5000"
-    restart: on-failure
+    restart: always
     ports:
       - "5000:5000"
     expose:
@@ -23,6 +81,8 @@ services:
     depends_on:
       - celery
       - redis
+    networks:
+      - custom_network
 
   celery:
     container_name: celery_service
@@ -35,41 +95,26 @@ services:
       context: AI
       dockerfile: Dockerfile
     command: sh -c "celery -A tasks worker -l info"
+    restart: always
     volumes:
       - ./AI:/AI
     depends_on:
       - redis
+    networks:
+      - custom_network
 
   redis:
     container_name: redis
     image: "redis:latest"
+    restart: always
     hostname: redis
-  
-  springboot:
-    container_name: springboot
-    # Spring Boot 서버 설정
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/backend
-    ports:
-      - "8080:8080"
+    networks:
+      - custom_network
 
-  # react:
-  #   container_name: react
-  #   env_file:
-  #     - ./frontend/.env
-  #   # Spring Boot 서버 설정
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./frontend/src:/frontend/src
-  #     - ./frontend/node_modules:/frontend/node_modules
-  #   restart: always
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - springboot
-  #     - flask
+  
+
+
+# 컨테이너들을 동일 네트워크로 묶기 위함(이거 안해도 되긴 하던데 왜 하는지 모르겠네)
+networks:
+  custom_network:
+

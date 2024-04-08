@@ -9,7 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 import logo from "../assets/img/UUJJ.png";
 import Background from "../assets/img/Group.png";
-import GoogleLogin from "../assets/img/Googlelogin.png";
+import GoogleLogin from "../assets/img/GoogleLogin.png";
 import OR from "../assets/img/Or.png";
 
 const LoginContainer = styled.div`
