@@ -8,11 +8,9 @@ spring:
 #      dev:
 #        - oauth
 
-
 ---
 
 spring:
   config:
     activate:
       profile: dev
-

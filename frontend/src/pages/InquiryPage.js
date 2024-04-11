@@ -126,7 +126,7 @@ const InquiryPage = () => {
 
       try {
           const token = sessionStorage.getItem("token");
-          const response = await axios.post('http://localhost:8080/qna/upload', { title, content }, {
+          const response = await axios.post('/api/qna/upload', { title, content }, {
               headers: {
                   'Authorization': `Bearer ${token}` 
               }

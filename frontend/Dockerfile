@@ -23,9 +23,11 @@ FROM nginx:latest
 # 위에서 build해서 생긴 /frontend/build를 nginx 웹 서버의 /usr/share/nginx/html로 복사(react를 nginx로 실행)
 COPY --from=build /frontend/build /usr/share/nginx/html
 
+# RUN rm /etc/nginx/nginx.conf
 RUN rm /etc/nginx/nginx.conf
 # (로컬)nginx.conf 파일 / (컨테이너) etc/nginx/conf.d/default.conf로 복사
-COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+# COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 # 80포트 오픈하고 nginx 실행
 EXPOSE 80

@@ -132,7 +132,7 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/login", {
+      const response = await axios.post("/api/login", {
         username,
         password,
       });
@@ -163,7 +163,7 @@ const LoginPage = () => {
   };
 
   const onGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = "/api/oauth2/authorization/google";
   };
 
   const showToast = () => {

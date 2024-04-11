@@ -158,7 +158,7 @@ const Select = () => {
     if (selectedVideoId) {
       axios
         .post(
-          `http://localhost:8080/videos/info`,
+          `/api/videos/info`,
           {
             videoid: selectedVideoId,
           },

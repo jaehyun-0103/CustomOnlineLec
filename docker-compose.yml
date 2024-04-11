@@ -45,12 +45,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      # volumes:
-      # - ./backend:/backend
-    # environment:
-    #   SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3305/customdb?useSSL=false&allowPublicKeyRetrieval=true
-    #   SPRING_DATASOURCE_USERNAME: "user"
-    #   SPRING_DATASOURCE_PASSWORD: "0000"
     restart: always
     # depends_on:
     #   - mysql
