@@ -6,13 +6,14 @@ from dao.dao import VideoDao
 import os, tempfile, boto3, shutil, time, tempfile
 from datetime import datetime
 from celery import group
+import ffmpeg
 
 # import whisper
 
 # swagger
 from flask_restx import Api, Resource, fields
 from dotenv import load_dotenv
-from moviepy.editor import VideoFileClip, AudioFileClip
+from moviepy.editor import VideoFileClip
 
 
 app = Flask(__name__)
@@ -93,7 +94,7 @@ class ConvertVoice(Resource):
                 time.sleep(1)
             print("변환 완료")
             
-            # subtitle = subtitle.get()
+            # subtitle = subtitle.get()  
             # if subtitle['success']:
             #     subtitle_result = subtitle['data']
             #     stt_result = 1
@@ -132,6 +133,7 @@ class ConvertVoice(Resource):
             response = jsonify(response_data)
             response.status_code = 200  # 성공적인 요청을 나타내는 HTTP 상태 코드
 
+            print(response)
             # 응답 반환
             return response
 
@@ -171,38 +173,37 @@ def s3_connection():
         raise
 
 def extract_audio(dir_path, file_path):
+    print("음성 추출 시작")
+    
+    # 동영상 파일 로드
+    video_clip = VideoFileClip(file_path)
+
+    print("오디오 추출")
+    # 오디오 추출
+    audio_clip = video_clip.audio
+
+    print("파일명 추출")
+    # 파일명 추출
+    file_name = os.path.splitext(os.path.basename(file_path))[0]
+
+    # 오디오 파일 경로 설정
+    output_audio_path = os.path.join(dir_path, f'{file_name}_extract_audio.mp3')
+    print(output_audio_path)
+    
+    print("저장 전")
+    
     try:
-        print("음성 추출 시작")
-        # 동영상 파일 로드
-        video_clip = VideoFileClip(file_path)
-
-        print("오디오 추출")
-        # 오디오 추출
-        audio_clip = video_clip.audio
-
-        print("파일명 추출")
-        # 파일명 추출
-        file_name = os.path.splitext(os.path.basename(file_path))[0]
-
-        # 오디오 파일 경로 설정
-        output_audio_path = os.path.join(dir_path, f'{file_name}_extract_audio.wav')
-        print(output_audio_path)
-        
-        print("저장 전")
         # 오디오를 WAV 파일로 저장
         audio_clip.write_audiofile(output_audio_path, codec='pcm_s16le', fps=audio_clip.fps)
+        audio_clip.write_audiofile(output_audio_path)
         print("저장 후")
-
     except Exception as e:
-        print(f"오류 발생: {e}")
-
+        print(f"오디오 저장 중 오류 발생: {e}")
     finally:
         # 메모리에서 오디오 클립 제거
         audio_clip.close()
-        print("오디오 클립 제거 완료")
 
     return output_audio_path
-
 
 def DeleteAllFiles(filePath):
     if os.path.exists(filePath):
