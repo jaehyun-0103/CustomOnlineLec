@@ -50,7 +50,9 @@ class ConvertVoice(Resource):
             original_video_s3_path = request.json['url']
             gender = request.json['gender']
             
-            dir_path = "./files/"
+            dir_path = "./files/"# os.path.exists()를 사용하여 폴더가 이미 존재하는지 확인합니다.
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
 
             # s3 연결 및 객체 생성
             s3 = s3_connection()
@@ -115,8 +117,9 @@ class ConvertVoice(Resource):
             print("DB 연결")
             video_id = video_dao.upload_convert_s3_path(connection, user_id, original_video_s3_path, results)
             connection.close()
+            print("DB 업로드 완료")
             
-            DeleteAllFiles(dir_path)
+            # DeleteAllFiles(dir_path)
 
             # JSON 형식 자막, s3 경로 저장한 테이블 기본키 HTTP body에 넣어서 프론트에 return
             response_data = {
@@ -168,30 +171,38 @@ def s3_connection():
         raise
 
 def extract_audio(dir_path, file_path):
-    print("음성 추출 시작")
-    # 동영상 파일 로드
-    video_clip = VideoFileClip(file_path)
+    try:
+        print("음성 추출 시작")
+        # 동영상 파일 로드
+        video_clip = VideoFileClip(file_path)
 
-    print("오디오 추출")
-    # 오디오 추출
-    audio_clip = video_clip.audio
+        print("오디오 추출")
+        # 오디오 추출
+        audio_clip = video_clip.audio
 
-    print("파일명 추출")
-    # 파일명 추출
-    file_name = os.path.splitext(os.path.basename(file_path))[0] # splitext : 파일의 확장자를 분리해서 저장하기 위함
+        print("파일명 추출")
+        # 파일명 추출
+        file_name = os.path.splitext(os.path.basename(file_path))[0]
 
-    # 오피오 파일 경로 설정
-    output_audio_path = os.path.join(dir_path, f'{file_name}_extract_audio.wav')
-    print(output_audio_path)
-    
-    print("저장 전")
-    # 오디오를 WAV 파일로 저장
-    audio_clip.write_audiofile(output_audio_path, codec='pcm_s16le', fps=audio_clip.fps)
-    print("저장 후")
-    # 메모리에서 오디오 클립 제거
-    audio_clip.close()
+        # 오디오 파일 경로 설정
+        output_audio_path = os.path.join(dir_path, f'{file_name}_extract_audio.wav')
+        print(output_audio_path)
+        
+        print("저장 전")
+        # 오디오를 WAV 파일로 저장
+        audio_clip.write_audiofile(output_audio_path, codec='pcm_s16le', fps=audio_clip.fps)
+        print("저장 후")
+
+    except Exception as e:
+        print(f"오류 발생: {e}")
+
+    finally:
+        # 메모리에서 오디오 클립 제거
+        audio_clip.close()
+        print("오디오 클립 제거 완료")
 
     return output_audio_path
+
 
 def DeleteAllFiles(filePath):
     if os.path.exists(filePath):
@@ -203,4 +214,5 @@ def DeleteAllFiles(filePath):
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', port=5000, debug=True)
+    # app.run('0.0.0.0', port=5000, debug=True)
+    app.run('0.0.0.0', port=5000)
