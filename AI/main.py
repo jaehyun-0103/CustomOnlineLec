@@ -3,21 +3,24 @@ from flask import Flask, request, jsonify
 from DB.config import DB
 from DB.connection import get_connection
 from dao.dao import VideoDao
-import os, tempfile, boto3, shutil, time, tempfile, time
+import os, boto3, shutil, time, time
 from datetime import datetime
 from celery import group
-
-# import whisper
 
 # swagger
 from flask_restx import Api, Resource, fields
 from dotenv import load_dotenv
 from moviepy.editor import VideoFileClip, AudioFileClip
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+# 병렬 처리용 스레드 풀 생성
+executor = ThreadPoolExecutor(max_workers=4)  # 최대 4개의 스레드 사용
+
 
 app = Flask(__name__)
 
 load_dotenv()
+
 
 AWS_DEFAULT_REGION = os.environ.get('AWS_DEFAULT_REGION')
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
@@ -48,12 +51,12 @@ class ConvertVoice(Resource):
         try:
             # 작업 시작 시간 기록
             start_time = time.time()
-            
+
             user_id = request.json['userId']
             original_video_s3_path = request.json['url']
             gender = request.json['gender']
             print(request)
-            
+
             dir_path = "./files/"
             create_directory(dir_path)
 
@@ -69,15 +72,15 @@ class ConvertVoice(Resource):
             # 원본 영상 다운로드
             if not s3_get_object(s3, S3_BUCKET, original_video_s3_path, local_video_path):
                 print("파일 다운 실패")
-            
+
             print("원본 동영상", local_video_path)
-            
+
             # -----------------------------------------------------------------------------------------------------------
             # 음성 추출
             # local_audio_path = extract_audio(dir_path, local_video_path)
             # print("추출 음성 경로", local_audio_path)
             # -----------------------------------------------------------------------------------------------------------
-            
+
             # 모델 목록
             model_list = ["jimin", "jung", "iu", "karina"]
             # model_list = ["yoon"]
@@ -85,43 +88,63 @@ class ConvertVoice(Resource):
             rvc_result = 0
             stt_result = 1
 
+
+
             # STT 실행(비동기)
             # subtitle = stt.delay(local_audio_path)
-            
+
             # ---------------------------------------------------------서버 사용X-----------------------------------------------------------------------
             # 서버 사용X -> 변환 음성 파일과 원본 영상 합치는 코드 작성(Celery 사용X)
             # audio_dir_path: 변환 음성
             # dir_path: 변환 영상 저장 경로
             print("************************************************************")
             print(original_filename)
-            if (original_filename == "형준.mp4" or original_filename == "형준1.mp4" or original_filename == "형준2.mp4"):
-                audio_dir_path = "./convert_audio/형준/"
-                for model in model_list:
-                    convert_video_path = merge_video_audio(dir_path, local_video_path, model, audio_dir_path)
-                    # 최종 변환 파일 이름 추출
-                    convert_video_name_mp4 = os.path.basename(convert_video_path)
-                    
-                    # s3 업로드
-                    convert_video_path_s3 = "convert_video/" + convert_video_name_mp4  # 저장할 S3 경로
-                    results[model] = convert_video_path_s3
-                    if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
-                        print("파일 업로드 실패")
-                    
-            else: # 세정
-                audio_dir_path = "./convert_audio/세정/"
-                for model in model_list:
-                    convert_video_path = merge_video_audio(dir_path, local_video_path, model, audio_dir_path)
-                    # 최종 변환 파일 이름 추출
-                    convert_video_name_mp4 = os.path.basename(convert_video_path)
 
-                    # s3 업로드
-                    convert_video_path_s3 = "convert_video/" + convert_video_name_mp4  # 저장할 S3 경로
-                    results[model] = convert_video_path_s3
-                    if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
-                        print("파일 업로드 실패")
+            # 병렬 처리할 작업 리스트 생성
+            futures = []
+            if original_filename in ["형준.mp4", "형준1.mp4", "형준2.mp4"]:
+                audio_dir_path = "./convert_audio/형준/"
+            else:
+                audio_dir_path = "./convert_audio/세정/"
+
+            for model in model_list:
+                future = executor.submit(merge_and_upload, dir_path, local_video_path, model, audio_dir_path, s3, S3_BUCKET)
+                futures.append(future)
+
+            # 모든 작업이 완료될 때까지 기다림
+            for future in as_completed(futures):
+                model, convert_video_path_s3 = future.result()
+                results[model] = convert_video_path_s3
+
+
+#             if (original_filename == "형준.mp4" or original_filename == "형준1.mp4" or original_filename == "형준2.mp4"):
+#                 audio_dir_path = "./convert_audio/형준/"
+#                 for model in model_list:
+#                     convert_video_path = merge_video_audio(dir_path, local_video_path, model, audio_dir_path)
+#                     # 최종 변환 파일 이름 추출
+#                     convert_video_name_mp4 = os.path.basename(convert_video_path)
+#
+#                     # s3 업로드
+#                     convert_video_path_s3 = "convert_video/" + convert_video_name_mp4  # 저장할 S3 경로
+#                     results[model] = convert_video_path_s3
+#                     if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
+#                         print("파일 업로드 실패")
+#
+#             else: # 세정
+#                 audio_dir_path = "./convert_audio/세정/"
+#                 for model in model_list:
+#                     convert_video_path = merge_video_audio(dir_path, local_video_path, model, audio_dir_path)
+#                     # 최종 변환 파일 이름 추출
+#                     convert_video_name_mp4 = os.path.basename(convert_video_path)
+#
+#                     # s3 업로드
+#                     convert_video_path_s3 = "convert_video/" + convert_video_name_mp4  # 저장할 S3 경로
+#                     results[model] = convert_video_path_s3
+#                     if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
+#                         print("파일 업로드 실패")
             # ---------------------------------------------------------서버 사용X-----------------------------------------------------------------------
-            
-            
+
+
             # merge_video_audio(dir_path, local_video_path, audio_path) # audio_path: 변환 음성
             # -----------------------------------------------------------------------------------------------------------
             # RVC 변환(비동기)
@@ -134,7 +157,7 @@ class ConvertVoice(Resource):
             #     time.sleep(1)
             # print("변환 완료")
             # -----------------------------------------------------------------------------------------------------------
-            
+
             # subtitle = subtitle.get()
             # if subtitle['success']:
             #     subtitle_result = subtitle['data']
@@ -158,7 +181,7 @@ class ConvertVoice(Resource):
             #     else:
             #         rvc_result = -1
             # -----------------------------------------------------------------------------------------------------------
-            
+
             # 작업 종료 시간 기록
             end_time = time.time()
             # 처리 시간 계산
@@ -171,7 +194,7 @@ class ConvertVoice(Resource):
             subtitle_result = 1
             video_id = video_dao.upload_convert_s3_path(connection, user_id, original_video_s3_path, results, subtitle_result)
             connection.close()
-            
+
             # DeleteAllFiles(dir_path)
 
             # JSON 형식 자막, s3 경로 저장한 테이블 기본키 HTTP body에 넣어서 프론트에 return
@@ -184,7 +207,7 @@ class ConvertVoice(Resource):
             # HTTP 응답 생성
             response = jsonify(response_data)
             response.status_code = 200  # 성공적인 요청을 나타내는 HTTP 상태 코드
-            
+
             print(response_data)
 
             # 응답 반환
@@ -210,7 +233,7 @@ def s3_get_object(s3, bucket, s3_filepath, local_filepath):
     except Exception as e:
         print(e)
         return False
-    
+
 # S3 연결 및 S3 객체 반환
 def s3_connection():
     try:
@@ -242,7 +265,7 @@ def extract_audio(dir_path, file_path):
     # 오피오 파일 경로 설정
     output_audio_path = os.path.join(dir_path, f'{file_name}_extract_audio.wav')
     print(output_audio_path)
-    
+
     print("저장 전")
     # 오디오를 WAV 파일로 저장
     audio_clip.write_audiofile(output_audio_path, codec='pcm_s16le', fps=audio_clip.fps)
@@ -272,15 +295,30 @@ def DeleteAllFiles(filePath):
     # else:
         # return 'Directory Not Found'
 
+def merge_and_upload(dir_path, local_video_path, model, audio_dir_path, s3, s3_bucket):
+    try:
+        convert_video_path = merge_video_audio(dir_path, local_video_path, model, audio_dir_path)
+        convert_video_name_mp4 = os.path.basename(convert_video_path)
+        convert_video_path_s3 = "convert_video/" + convert_video_name_mp4
+        if s3_put_object(s3, s3_bucket, convert_video_path, convert_video_path_s3):
+            print(f"{model} 모델: 파일 업로드 성공")
+            return model, convert_video_path_s3
+        else:
+            print(f"{model} 모델: 파일 업로드 실패")
+            return model, None
+    except Exception as e:
+        print(f"{model} 모델에서 오류 발생: {e}")
+        return model, None
+
 def merge_video_audio(convert_voice_path, video_path, model, audio_dir_path):
-    
+
     # 예시
     # "./convert_audio/형준/jung.mp3"
     # "./convert_audio/형준/iu.mp3"
     convert_audio_path = os.path.join(audio_dir_path, model + ".wav")
     print("*****************************************")
     print(convert_audio_path)
-    
+
     video_clip = VideoFileClip(video_path)
     audio_clip = AudioFileClip(convert_audio_path)
 
@@ -299,10 +337,9 @@ def merge_video_audio(convert_voice_path, video_path, model, audio_dir_path):
 
     # 새로운 파일로 저장(.mp4)
     video_clip.write_videofile(output_path, codec="libx264", audio_codec="aac", ffmpeg_params=["-preset", "ultrafast"])
-    
-    
 
     return output_path
+
 
 def s3_put_object(s3, bucket, local_filepath, s3_filepath):
     try:
