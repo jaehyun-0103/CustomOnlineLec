@@ -16,28 +16,23 @@ services:
     depends_on:
       - springboot
       # - flask
-    networks:
-      - custom_network
-  # mysql:
-  #   container_name: mysql
-  #   image: "mysql:8"  # 원하는 MySQL 버전으로 변경할 수 있습니다.
-  #   environment:
-  #     MYSQL_DATABASE: customdb  # 생성할 데이터베이스 이름
-  #     MYSQL_ROOT_HOST: '%'
-  #     MYSQL_ROOT_PASSWORD: 0000  # root 사용자의 비밀번호 설정
-  #     MYSQL_USER: user  # 생성할 사용자 이름
-  #     MYSQL_PASSWORD: 0000  # 생성할 사용자의 비밀번호
-  #     TZ: 'Asia/Seoul'
-  #   # volumes:
-  #   #   - ./mysql/conf.d:/etc/mysql/conf.d/ # MySQL 설정 파일 위치
-  #   ports:
-  #     - "3305:3306"  # 필요에 따라 포트 변경 가능
-  #   command:
-  #     - --character-set-server=utf8mb4
-  #     - --collation-server=utf8mb4_unicode_ci
-  #   restart: always
-  #   networks:
-  #     - custom_network
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 0000
+      MYSQL_DATABASE: customdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 0000
+      TZ: Asia/Seoul
+    volumes:
+      # - mysql_data:/var/lib/mysql
+      - ./db/mysql/data:/var/lib/mysql
+      - ./db/mysql/init:/docker-entrypoint-initdb.d
+    platform: linux/x86_64
 
   springboot:
     container_name: springboot
@@ -46,12 +41,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     restart: always
-    # depends_on:
-    #   - mysql
     ports:
       - "8080:8080"
-    networks:
-      - custom_network
+    depends_on:
+      - mysql
 
   flask:
     container_name: flask
@@ -75,8 +68,6 @@ services:
     depends_on:
       - celery
       - redis
-    networks:
-      - custom_network
 
   celery:
     container_name: celery_service
@@ -94,21 +85,9 @@ services:
       - ./AI:/AI
     depends_on:
       - redis
-    networks:
-      - custom_network
 
   redis:
     container_name: redis
     image: "redis:latest"
     restart: always
     hostname: redis
-    networks:
-      - custom_network
-
-  
-
-
-# 컨테이너들을 동일 네트워크로 묶기 위함(이거 안해도 되긴 하던데 왜 하는지 모르겠네)
-networks:
-  custom_network:
-
