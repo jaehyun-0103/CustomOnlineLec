@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
-import config from '../config';
+import config from '../../config';
 import AWS from "aws-sdk";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/header/Navbar";

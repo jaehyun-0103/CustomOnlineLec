@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import config from '../config';
+import config from '../../config';
 import AWS from "aws-sdk";
 import Sidebar from "../../components/sidebar/Sidebar";
 import styled from "styled-components";
