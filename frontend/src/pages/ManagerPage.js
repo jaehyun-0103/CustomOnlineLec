@@ -21,8 +21,8 @@ import avatarImg5 from "../assets/avatarImg/키키.jpg";
 import avatarImg6 from "../assets/avatarImg/뽀로로.jpg";
 
 import voiceImg1 from "../assets/avatarImg/문재인.jpg";
-import voiceImg2 from "../assets/avatarImg/지민.jpg";
-import voiceImg3 from "../assets/avatarImg/윈터.jpg";
+import voiceImg2 from "../assets/avatarImg/일론머스크.jpg";
+import voiceImg3 from "../assets/avatarImg/아이유.jpg";
 import voiceImg4 from "../assets/avatarImg/카리나.jpg";
 
 import { registerables, CategoryScale, Chart } from "chart.js";
@@ -78,6 +78,7 @@ const DashContainer = styled.div`
   width: 50%;
   background-color: #fff;
   margin: 8px;
+  border-radius: 10px;
 `;
 
 const Sub = styled.span`
@@ -225,36 +226,54 @@ const ImageContainer = styled.div`
   margin-left: 12px;
   width: 90%;
 `;
+
 const QnaItems = styled.div`
-  margin-top: 40px;
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  height: 450px;
+  overflow-y: auto;
 `;
 
 const QnaContainer = styled.div`
-  margin-left: 10px;
-  margin-right: 10px;
-  border-bottom: 1px solid  #e1dddd;
-  border-top: 1px solid  #e1dddd;
+  align-items: center;
 `;
-const QnaContent = styled.div`
+
+const QnaBox = styled.div`
   padding: 10px;
 `;
+
 const QnaTitle = styled.p`
   margin: 0;
   font-family: "Inter";
   font-weight: 600;
   font-size: 20px;
 `;
+
 const QnaDate = styled.p`
   color: gray;
   margin: 0;
+`;
+
+const QnaContent = styled.p`
+  margin: 0;
+  font-family: "Inter";
+  font-color: gray;
+  font-weight: 400;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 const QnaContainer2 = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
 const StyledFcOk = styled(FcOk)`
   font-size: 25px;
 `;
+
 const Manage = () => {
   const [videos, setVideos] = useState([]);
   const [users, setUsers] = useState([]);
@@ -378,7 +397,7 @@ const Manage = () => {
             const modifiedUserData = userData
               .map((user, index) => ({
                 ...user,
-                profileS3Path: urls[index] ? urls[index] : originProfileImage, // Use originProfileImage if url is null
+                profileS3Path: urls[index] ? urls[index] : originProfileImage,
               }))
               .reverse();
             setUsers(modifiedUserData);
@@ -492,13 +511,13 @@ const Manage = () => {
         },
       })
       .then((response) => {
-         const qnaData = response.data;
-      console.log("Q&A 목록 요청 성공");
-      setQnaData(qnaData);
+        const qnaData = response.data.slice(0, 10); 
+        console.log("Q&A 목록 요청 성공");
+        setQnaData(qnaData);
       })
       .catch((error) => console.error("Q&A 목록 요청 실패: ", error));
   };
-  
+
   const handleVideoClick = (videoId) => {
     sessionStorage.setItem("selectedVideoId", videoId);
   };
@@ -563,7 +582,7 @@ const Manage = () => {
       title: "문의 확인되었습니다.",
       icon: "success",
       showConfirmButton: false,
-      timer: 1500
+      timer: 1500,
     }).then(() => {
       axios
         .delete(`/api/qna/${qnaId}`, {
@@ -573,7 +592,6 @@ const Manage = () => {
         })
         .then((response) => {
           console.log("문의 삭제 성공");
-          addToast("성공적으로 문의가 처리되었습니다.", { appearance: "success", autoDismiss: true, autoDismissTimeout: 5000 });
           fetchQnaData();
         })
         .catch((error) => {
@@ -687,23 +705,24 @@ const Manage = () => {
           <DashContainer>
             <Sub>문의 내역</Sub>
             <QnaItems>
-        {qnaData.map((qna, index) => (
-          <QnaContainer key={qna.id || index}>
-            <QnaContent>
-              <QnaContainer2>
-                <QnaTitle>{qna.title}</QnaTitle>
-                <QnaDate>{qna.date}</QnaDate>
-              </QnaContainer2>
-              <QnaContainer2>
-                <p>{qna.content}</p>
-                <DeleteButton onClick={() => handleDeleteQnaButtonClick(qna.id)}>
-                 <StyledFcOk/>
-                </DeleteButton>
-              </QnaContainer2>
-            </QnaContent>
-          </QnaContainer>
-        ))}
-      </QnaItems>
+              <DivideLine></DivideLine>
+              {qnaData.map((qna, index) => (
+                <><QnaContainer key={qna.id || index}>
+                  <QnaBox>
+                    <QnaContainer2>
+                      <QnaTitle>{qna.title}</QnaTitle>
+                      <QnaDate>{qna.date}</QnaDate>
+                    </QnaContainer2>
+                    <QnaContainer2>
+                      <QnaContent>{qna.content}</QnaContent>
+                      <DeleteButton onClick={() => handleDeleteQnaButtonClick(qna.id)}>
+                        <StyledFcOk />
+                      </DeleteButton>
+                    </QnaContainer2>
+                  </QnaBox>
+                </QnaContainer><DivideLine></DivideLine></>
+              ))}
+            </QnaItems>
           </DashContainer>
         </Container>
       </MainContainer>

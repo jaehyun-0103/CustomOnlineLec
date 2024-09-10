@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "qna")
 public class Qna {
 
     @Id
@@ -26,7 +25,6 @@ public class Qna {
     private String title;
     private String content;
 
-    @Column(nullable = false) // columnDefinition을 제거합니다.
     private LocalDateTime date;
 
     public void setQna(QnaUploadRequestDTO qnaUploadRequestDTO, UserEntity user) {

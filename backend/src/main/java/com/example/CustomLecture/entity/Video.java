@@ -41,12 +41,12 @@ public class Video {
 
     private String content;
 
-    @Column(nullable = false) // columnDefinition을 제거합니다.
     private LocalDateTime date;
 
     private String subject;
 
     //자막
+    @Lob
     private String subtitle;
 
     @Column(unique = true)
@@ -112,8 +112,8 @@ public class Video {
 		        videoData.getVideoHeight(),
 
                 s3Path.getJimin(),
-                s3Path.getMoon(),
-                s3Path.getWinter(),
+                s3Path.getJung(),
+                s3Path.getIu(),
                 s3Path.getKarina()
         );
     }

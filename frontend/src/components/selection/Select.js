@@ -14,9 +14,9 @@ import avatarImg4 from "../../assets/avatarImg/트럼프.jpg";
 import avatarImg5 from "../../assets/avatarImg/키키.jpg";
 import avatarImg6 from "../../assets/avatarImg/뽀로로.jpg";
 
-import voiceImg1 from "../../assets/avatarImg/문재인.jpg";
+import voiceImg1 from "../../assets/avatarImg/정우성.jpg";
 import voiceImg2 from "../../assets/avatarImg/지민.jpg";
-import voiceImg3 from "../../assets/avatarImg/윈터.jpg";
+import voiceImg3 from "../../assets/avatarImg/아이유.jpg";
 import voiceImg4 from "../../assets/avatarImg/카리나.jpg";
 
 import "slick-carousel/slick/slick.css";
@@ -69,19 +69,11 @@ const CustomSlider = styled(Slider)`
   }
 
   .slick-slide {
-    margin: 0 10px;
-
-    &:hover {
-      height: 150px;
-    }
+    padding-top: 10px;
   }
+
   .slick-track {
     display: flex;
-  }
-
-  .selected {
-    height: 150px;
-    border: 2px solid #ffeb0b;
   }
 
   .slick-prev:before,
@@ -97,6 +89,16 @@ const Img = styled.img`
   margin: 0 auto 5px;
   display: block;
   border-radius: 50%;
+  transition: box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  &.selected {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  }
+
 `;
 
 const Name = styled.div`
@@ -129,9 +131,9 @@ const settings = {
 };
 
 const voices = [
-  { id: "moon", name: "문재인", img: voiceImg1 },
-  { id: "jimin", name: "BTS 지민", img: voiceImg2 },
-  { id: "winter", name: "에스파 윈터", img: voiceImg3 },
+  { id: "jung", name: "정우성", img: voiceImg1 },
+  { id: "jimin", name: "지민", img: voiceImg2 },
+  { id: "iu", name: "아이유", img: voiceImg3 },
   { id: "karina", name: "에스파 카리나", img: voiceImg4 },
 ];
 
@@ -146,7 +148,7 @@ const avatars = [
 
 const Select = () => {
   const goToCameraPage = () => {
-    window.location.href = "/camera.html";
+    window.location.href = "/functions/camera.html";
   };
   const [selectedVoiceIndex, setSelectedVoiceIndex] = useState(null);
   const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(null);
@@ -154,7 +156,7 @@ const Select = () => {
 
   useEffect(() => {
     const selectedVideoId = sessionStorage.getItem("selectedVideoId");
-
+    console.log(selectedVideoId);
     if (selectedVideoId) {
       axios
         .post(
@@ -170,6 +172,7 @@ const Select = () => {
         )
         .then((response) => {
           console.log("영상 정보 요청 성공");
+          console.log(response.data);
           sessionStorage.setItem("selectedVideoInfo", JSON.stringify(response.data));
         })
         .catch((error) => console.error("영상 정보 요청 실패 : ", error));
@@ -197,29 +200,33 @@ const Select = () => {
       <ContentContainer>
         <SelectText>음성 선택</SelectText>
         <Selection>
-          <CustomSlider {...settings}>
-            {voices.map((voice, index) => (
-              <div key={voice.name} className={selectedVoiceIndex === index ? "selected" : ""} onClick={() => handleVoiceSelection(index)}>
-                <Img src={voice.img} />
-                <Name>{voice.name}</Name>
-              </div>
-            ))}
-          </CustomSlider>
+        <CustomSlider {...settings}>
+  {voices.map((voice, index) => (
+    <div key={voice.name} onClick={() => handleVoiceSelection(index)}>
+      <Img
+        src={voice.img}
+        alt={voice.name}
+        className={selectedVoiceIndex === index ? 'selected' : ''}
+      />
+      <Name>{voice.name}</Name>
+    </div>
+  ))}
+</CustomSlider>
         </Selection>
         <SelectText>아바타 선택</SelectText>
         <Selection>
-          <CustomSlider {...settings}>
-            {avatars.map((avatar, index) => (
-              <div
-                key={avatar.name}
-                className={selectedAvatarIndex === index ? "selected" : ""}
-                onClick={() => handleAvatarSelection(index)}
-              >
-                <Img src={avatar.img} />
-                <Name>{avatar.name}</Name>
-              </div>
-            ))}
-          </CustomSlider>
+        <CustomSlider {...settings}>
+  {avatars.map((avatar, index) => (
+    <div key={avatar.id} onClick={() => handleAvatarSelection(index)}>
+      <Img
+        src={avatar.img}
+        alt={avatar.name}
+        className={selectedAvatarIndex === index ? 'selected' : ''}
+      />
+      <Name> {avatar.name}</Name>
+    </div>
+  ))}
+</CustomSlider>
         </Selection>
 
         <NextButton onClick={goToCameraPage}>
