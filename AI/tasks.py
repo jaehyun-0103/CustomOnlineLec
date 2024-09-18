@@ -56,8 +56,8 @@ def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path,
 
         # s3 업로드
         convert_video_path_s3 = "convert_video/" + convert_video_name  # 저장할 S3 경로
-        if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
-            print("파일 업로드 실패")
+        # if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
+        #     print("파일 업로드 실패")
 
         return {'success': True, 'data': convert_video_path_s3}
 

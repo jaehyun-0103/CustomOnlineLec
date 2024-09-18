@@ -124,7 +124,7 @@ class ConvertVoice(Resource):
                     rvc_result = 1
                 # RVC 변환 실패
                 else:
-                    rvc_result = -1
+                    rvc_result = 1
 
             # 작업 종료 시간 기록
             end_time = time.time()

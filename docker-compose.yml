@@ -1,22 +1,22 @@
 # version: '3.9'
 
 services:
-  my_mysql:
-    image: mysql:8.0
-    restart: always
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: 0000
-      MYSQL_DATABASE: customdb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 0000
-      TZ: Asia/Seoul
-    volumes:
-      # - mysql_data:/var/lib/mysql
-      - ./db/mysql/data:/var/lib/mysql
-      - ./db/mysql/init:/docker-entrypoint-initdb.d
-    platform: linux/x86_64
+  # my_mysql:
+  #   image: mysql:8.0
+  #   restart: always
+  #   ports:
+  #     - 3306:3306
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 0000
+  #     MYSQL_DATABASE: customdb
+  #     MYSQL_USER: user
+  #     MYSQL_PASSWORD: 0000
+  #     TZ: Asia/Seoul
+  #   volumes:
+  #     # - mysql_data:/var/lib/mysql
+  #     - ./db/mysql/data:/var/lib/mysql
+  #     - ./db/mysql/init:/docker-entrypoint-initdb.d
+  #   platform: linux/x86_64
 
   flask:
     container_name: flask
@@ -26,10 +26,10 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - DATABASE_HOST=my_mysql
-      - DATABASE_USER=user
-      - DATABASE_PASSWORD=4886
-      - DATABASE_NAME=customdb
+      # - DATABASE_HOST=my_mysql
+      # - DATABASE_USER=user
+      # - DATABASE_PASSWORD=4886
+      # - DATABASE_NAME=customdb
     build:
       context: ./AI
       dockerfile: Dockerfile
@@ -47,7 +47,7 @@ services:
     depends_on:
       - celery
       - redis
-      - my_mysql
+      # - my_mysql
 
   celery:
     container_name: celery_service
@@ -87,14 +87,14 @@ services:
       - ./backend:/backend
     ports:
       - "8080:8080"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-p4886"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 5s
-    depends_on:
-      - my_mysql
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-p4886"]
+    #   interval: 10s
+    #   retries: 5
+    #   start_period: 30s
+    #   timeout: 5s
+    # depends_on:
+      # - my_mysql
 
   # react:
   #   container_name: react
