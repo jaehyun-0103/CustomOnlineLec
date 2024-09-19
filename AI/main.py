@@ -89,7 +89,7 @@ class ConvertVoice(Resource):
             
             # RVC 변환(비동기)
             for model in model_list1:
-                results[model] = process_uploaded_file.delay(dir_path, local_video_path, local_audio_path, model, gender)
+                results[model] = process_uploaded_file.delay(dir_path, local_video_path, local_audio_path, model, gender, original_filename)
 
             # while not subtitle.ready() and not all(result.ready() for result in results.values()):
             while not all(result.ready() for result in results.values()):
@@ -98,7 +98,7 @@ class ConvertVoice(Resource):
             print("변환 완료")
             
             for model in model_list2:
-                results[model] = process_uploaded_file.delay(dir_path, local_video_path, local_audio_path, model, gender)
+                results[model] = process_uploaded_file.delay(dir_path, local_video_path, local_audio_path, model, gender, original_filename)
 
             # while not subtitle.ready() and not all(result.ready() for result in results.values()):
             while not all(result.ready() for result in results.values()):

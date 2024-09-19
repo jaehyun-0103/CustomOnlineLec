@@ -24,7 +24,7 @@ celery = Celery('FlaskAiModelServing', broker='redis://127.0.0.1:6379/0', backen
 
 
 @celery.task
-def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path, RVC_model, gender):
+def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path, RVC_model, gender, original_filename):
     
     try:
         result = []
@@ -56,8 +56,9 @@ def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path,
 
         # s3 업로드
         convert_video_path_s3 = "convert_video/" + convert_video_name  # 저장할 S3 경로
-        # if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
-        #     print("파일 업로드 실패")
+        if (original_filename != "형준.mp4" and original_filename != "형준1.mp4" and original_filename != "세정.mp4" and original_filename != "세정1.mp4"):
+            if not s3_put_object(s3, S3_BUCKET, convert_video_path, convert_video_path_s3):
+                print("파일 업로드 실패")
 
         return {'success': True, 'data': convert_video_path_s3}
 
