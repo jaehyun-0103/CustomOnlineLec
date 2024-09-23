@@ -369,7 +369,7 @@ const Manage = () => {
     const s3 = new AWS.S3();
 
     axios
-      .get(`${apiUrl}/admin/user/list`, {
+      .get(`/api/admin/user/list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -426,7 +426,7 @@ const Manage = () => {
     const s3 = new AWS.S3();
 
     axios
-      .get(`${apiUrl}/videos/list`, {
+      .get(`/api/videos/list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -508,7 +508,7 @@ const Manage = () => {
 
   const fetchQnaData = () => {
     axios
-      .get(`${apiUrl}/qna/list`, {
+      .get(`/api/qna/list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -535,7 +535,7 @@ const Manage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${apiUrl}/mypage/delete/${username}`, {
+          .delete(`/api/mypage/delete/${username}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -563,7 +563,7 @@ const Manage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${apiUrl}/admin/${videoId}`, {
+          .delete(`/api/admin/${videoId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -588,7 +588,7 @@ const Manage = () => {
       timer: 1500,
     }).then(() => {
       axios
-        .delete(`${apiUrl}/qna/${qnaId}`, {
+        .delete(`/api/qna/${qnaId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

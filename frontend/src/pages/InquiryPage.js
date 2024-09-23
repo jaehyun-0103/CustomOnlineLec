@@ -132,7 +132,7 @@ const InquiryPage = () => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.post(
-       `${apiUrl}/qna/upload`,
+       `/api/qna/upload`,
         { title, content },
         {
           headers: {

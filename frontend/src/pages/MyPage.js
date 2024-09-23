@@ -225,7 +225,7 @@ const MyPage = () => {
   const handleSaveClick = () => {
     axios
       .patch(
-        `${apiUrl}/mypage/update/${username}`,
+        `/api/mypage/update/${username}`,
         {
           newNickname: editedNickname,
           currentPassword: currentPassword,
@@ -292,7 +292,7 @@ const MyPage = () => {
   const sendS3UrlToServer = (s3Url) => {
     axios
       .patch(
-        `${apiUrl}/mypage/update/profile/${username}`,
+        `/api/mypage/update/profile/${username}`,
         { ProfileS3Path: s3Url },
         {
           headers: {
@@ -321,7 +321,7 @@ const MyPage = () => {
 
     async function fetchProfileInfo() {
       try {
-        const response = await axios.get(`${apiUrl}/mypage/${username}`, {
+        const response = await axios.get(`/api/mypage/${username}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -364,7 +364,7 @@ const MyPage = () => {
 
     async function fetchVideos() {
       try {
-        const response = await axios.get(`${apiUrl}/videos/list`, {
+        const response = await axios.get(`/api/videos/list`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -433,7 +433,7 @@ const MyPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${apiUrl}/mypage/delete/${username}`, {
+          .delete(`/api/mypage/delete/${username}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

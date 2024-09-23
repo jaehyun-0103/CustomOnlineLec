@@ -12,11 +12,23 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: 0
       TZ: Asia/Seoul
-    volumes:
-      # - mysql_data:/var/lib/mysql
-      - ./db/mysql/data:/var/lib/mysql
-      - ./db/mysql/init:/docker-entrypoint-initdb.d
+    # volumes:
+    #   - ./db/mysql/data:/var/lib/mysql
+    #   - ./db/mysql/init:/docker-entrypoint-initdb.d
     platform: linux/x86_64
+  
+  nginx_react:
+    container_name: nginx_react
+    env_file:
+      - ./frontend/.env
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - springboot
 
   flask:
     container_name: flask
@@ -33,12 +45,6 @@ services:
     build:
       context: ./AI
       dockerfile: Dockerfile
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           capabilities: [gpu]
     volumes:
       - ./AI:/AI
     restart: on-failure
@@ -65,7 +71,6 @@ services:
           devices:
             - driver: nvidia
               capabilities: [gpu]
-    # command: sh -c "celery -A tasks worker -l info"
     volumes:
       - ./AI:/AI
     depends_on:
@@ -95,21 +100,3 @@ services:
       timeout: 5s
     depends_on:
       - my_mysql
-
-  # react:
-  #   container_name: react
-  #   env_file:
-  #     - ./frontend/.env
-  #   # Spring Boot 서버 설정
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./frontend/src:/frontend/src
-  #     - ./frontend/node_modules:/frontend/node_modules
-  #   restart: always
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - springboot
-  #     - flask

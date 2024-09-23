@@ -319,7 +319,7 @@ const Attach = () => {
 
     try {
       const response = await axios.post(
-       `${apiUrl}/videos/uploadVideo`,
+       `/api/videos/uploadVideo`,
         {
           url,
           gender,

@@ -136,7 +136,7 @@ const UploadList = () => {
     const s3 = new AWS.S3();
 
     axios
-      .get(`${apiUrl}/videos/list`, {
+      .get(`/api/videos/list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

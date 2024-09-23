@@ -22,7 +22,6 @@ DB = {
 
 celery = Celery('FlaskAiModelServing', broker='redis://127.0.0.1:6379/0', backend='redis://127.0.0.1:6379/0')
 
-
 @celery.task
 def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path, RVC_model, gender):
     
@@ -44,7 +43,6 @@ def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path,
         convert_voice_path = execute_voice_conversion(RVC_model, local_audio_path, pitch)
         # convert_voice_path = local_audio_path
 
-
         # 원본 영상 + 변환 음성
         convert_video_path = merge_video_audio(convert_video_dir, local_video_path, convert_voice_path)
 
@@ -52,7 +50,6 @@ def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path,
         convert_video_name_mp4 = os.path.basename(convert_video_path)
         convert_video_name, convert_video_mp4 = os.path.splitext(convert_video_name_mp4)
         convert_video_name = convert_video_name + "_" + RVC_model + convert_video_mp4
-
 
         # s3 업로드
         convert_video_path_s3 = "convert_video/" + convert_video_name  # 저장할 S3 경로
@@ -64,7 +61,6 @@ def process_uploaded_file(convert_video_dir, local_video_path, local_audio_path,
     except Exception as e:
         # 예외 발생 시 로그를 출력하고 예외를 다시 발생시키지 않음
         return {'success': False}
-
 
 # 원본 영상 + 변환 음성
 @celery.task
@@ -86,7 +82,6 @@ def merge_video_audio(convert_voice_path, video_path, audio_path):
 
     return output_path
 
-
 # S3 연결 및 S3 객체 반환
 @celery.task
 def s3_connection():
@@ -103,7 +98,6 @@ def s3_connection():
         print(e)
         raise
 
-
 # S3에 파일 업로드
 @celery.task
 def s3_put_object(s3, bucket, local_filepath, s3_filepath):
@@ -114,7 +108,6 @@ def s3_put_object(s3, bucket, local_filepath, s3_filepath):
         print(e)
         return False
     return True
-
 
 @celery.task
 def execute_voice_conversion(model_name, local_file_dir, pitch):

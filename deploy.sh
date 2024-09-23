@@ -4,7 +4,7 @@
 cd /home/ubuntu/CustomOnlineLec
 
 # 최신 코드 가져오기
-git pull origin serverTest/#1
+git pull origin devops/#1
 
 # Docker Compose 작업
 # sudo docker-compose down

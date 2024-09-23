@@ -7,13 +7,10 @@ import os, tempfile, boto3, shutil, time, tempfile, time, gc, torch
 from datetime import datetime
 from celery import group
 
-# import whisper
-
 # swagger
 from flask_restx import Api, Resource, fields
 from dotenv import load_dotenv
 from moviepy.editor import VideoFileClip, AudioFileClip
-
 
 app = Flask(__name__)
 
@@ -43,8 +40,6 @@ upload_model = api.model('UploadModel', {
 class ConvertVoice(Resource):
     @ai_serving_api.expect(upload_model)
     def post(self):
-        # 임시 폴더 생성
-        # with tempfile.TemporaryDirectory() as temp_dir:
         try:
             # 작업 시작 시간 기록
             start_time = time.time()
@@ -75,7 +70,7 @@ class ConvertVoice(Resource):
             # 음성 추출
             local_audio_path = extract_audio(dir_path, local_video_path)
             print("추출 음성 경로", local_audio_path)
- 
+
             # 모델 목록
             model_list1 = ["jimin", "jung"]
             model_list2 = ["iu", "karina"]
@@ -91,7 +86,6 @@ class ConvertVoice(Resource):
             for model in model_list1:
                 results[model] = process_uploaded_file.delay(dir_path, local_video_path, local_audio_path, model, gender)
 
-            # while not subtitle.ready() and not all(result.ready() for result in results.values()):
             while not all(result.ready() for result in results.values()):
                 print("변환중...")
                 time.sleep(1)
@@ -100,7 +94,6 @@ class ConvertVoice(Resource):
             for model in model_list2:
                 results[model] = process_uploaded_file.delay(dir_path, local_video_path, local_audio_path, model, gender)
 
-            # while not subtitle.ready() and not all(result.ready() for result in results.values()):
             while not all(result.ready() for result in results.values()):
                 print("변환중...")
                 time.sleep(1)
@@ -163,12 +156,12 @@ class ConvertVoice(Resource):
             return response
 
         except ValueError:
-            # DeleteAllFiles(dir_path)
+            DeleteAllFiles(dir_path)
             # 잘못된 요청일 경우 HTTP 상태 코드 400 반환
             return {'error': 'Bad Request'}, 400
 
         except Exception as e:
-            # DeleteAllFiles(dir_path)
+            DeleteAllFiles(dir_path)
             # 서버에서 오류가 발생한 경우 HTTP 상태 코드 500과 오류 메시지 반환
             print("에러 발섕 : ", e)
             return {'error': str(e)}, 500
@@ -224,18 +217,6 @@ def extract_audio(dir_path, file_path):
 
     return output_audio_path
 
-# def DeleteAllFiles(dir_path):
-#     if os.path.exists(dir_path):
-#         for file in os.scandir(dir_path):
-#             try:
-#                 os.remove(file.path)
-#             except PermissionError as e:
-#                 print(f"PermissionError: {e}. Waiting for file to be released.")
-#                 time.sleep(1)  # 파일이 해제될 때까지 1초 대기
-#                 DeleteAllFiles(dir_path)  # 재귀적으로 함수 호출
-#             except Exception as e:
-#                 print(f"Error deleting {file.path}: {e}")
-
 def DeleteAllFiles(filePath):
     if os.path.exists(filePath):
         for file in os.scandir(filePath):
@@ -243,9 +224,6 @@ def DeleteAllFiles(filePath):
                 os.remove(file.path)  # 파일 삭제
             elif file.is_dir():
                 shutil.rmtree(file.path)  # 디렉토리 및 그 내부의 모든 파일/디렉토리 삭제
-        # return 'Remove All File'
-    # else:
-        # return 'Directory Not Found'
 
 def merge_video_audio(convert_voice_path, video_path, model, audio_dir_path):
     
@@ -253,8 +231,6 @@ def merge_video_audio(convert_voice_path, video_path, model, audio_dir_path):
     # "./convert_audio/형준/jung.mp3"
     # "./convert_audio/형준/iu.mp3"
     convert_audio_path = os.path.join(audio_dir_path, model + ".wav")
-    print("*****************************************")
-    print(convert_audio_path)
     
     video_clip = VideoFileClip(video_path)
     audio_clip = AudioFileClip(convert_audio_path)
@@ -264,18 +240,12 @@ def merge_video_audio(convert_voice_path, video_path, model, audio_dir_path):
 
     # 파일명 추출
     file_name = os.path.splitext(os.path.basename(video_path))[0]  # splitext : 파일의 확장자를 분리해서 저장하기 위함
-    # file_name = os.path.splitext(os.path.basename(convert_audio_path))[0]
 
     # 최종 영상 저장 경로 설정
-    # output_path = os.path.join(convert_voice_path, f'{file_name}_convert_video.mp4')
     output_path = os.path.join(convert_voice_path, f'{file_name}_convert_video_{model}.mp4')
-
-
 
     # 새로운 파일로 저장(.mp4)
     video_clip.write_videofile(output_path, codec="libx264", audio_codec="aac", ffmpeg_params=["-preset", "ultrafast"])
-    
-    
 
     return output_path
 

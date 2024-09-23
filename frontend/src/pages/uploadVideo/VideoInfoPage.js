@@ -210,7 +210,7 @@ const VideoInfo = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/videos/uploadInfo`,
+        `/api/videos/uploadInfo`,
         {
           id,
           title,

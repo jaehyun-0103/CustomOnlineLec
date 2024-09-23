@@ -101,7 +101,7 @@ export default function RegisterPage() {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post(`${apiUrl}/join`, {
+      const response = await axios.post(`/api/join`, {
         username,
         password,
         nickname,

@@ -162,7 +162,7 @@ const Select = () => {
     if (selectedVideoId) {
       axios
         .post(
-          `${apiUrl}/videos/info`,
+          `/api/videos/info`,
           {
             videoid: selectedVideoId,
           },
