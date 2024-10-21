@@ -1,9 +1,8 @@
 
-<h3 align="center">개인 맞춤형 오디오 및 아바타 변경 인강 시스템</h3>
+<h3 align="center">인터넷 강의 개인화를 위한 오디오 및 2D 아바타 변환 시스템</h3>
 
 <div align=center>
-<br> <image width=50%, height=50%, src="https://github.com/user-attachments/assets/ea3dd0e4-335b-4720-b760-fbb73e3e4953">
-
+<br> <image width=50%, height=50%, src="https://github.com/user-attachments/assets/ce942107-693f-4c7a-a6e4-2b31b69bc079">
 <br><strong>🐂 최고의 인강 서비스를 경험해보세요! 🐂</strong><br>
 </div>
 
