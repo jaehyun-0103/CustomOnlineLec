@@ -97,9 +97,8 @@
 ## 👨‍👩‍👧‍👧 Member
 
 | Name  | <center>조재현</center> | <center>유호선</center> | <center>조형준</center> | <center>유세정</center> |
-| :----- | :---------------------------------------: |:----------------------------------:| :---------------------------------------: | :----------------------------------------: |
-| Profile | <center> <img width="150px" height="150px" src="https://github.com/user-attachments/assets/4d9555ec-e7b8-4377-9fbd-9c691f806770" /> </center>|<center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/de78b3dd-23d8-4ce8-91a8-0d5108f40cca" /></center>|<center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/5f1efd63-f77d-4625-b295-539b10ab2efd"/></center>|<center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/59cc5ad7-54de-45de-8758-aa7f3e61ce81" /></center> |
-| Role    | <center>Team Leader<br>Frontend<br></center>   | <center>Frontend</center>  | <center>Backend<br>DevOps</center>  | <center>Backend<br>DevOps</center> |
-| GitHub  | <center>&nbsp;&nbsp;&nbsp;[@jaehyun-0103](https://github.com/jaehyun-0103)&nbsp;&nbsp;&nbsp;</center> | <center>[@hsyou1129](https://github.com/hsyou1129)</center>| <center>[@Tojaman](https://github.com/Tojaman)</center>| <center>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[@Yoosejeong](https://github.com/Yoosejeong)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</center> |
+| :-----: | :---------------------------------------: | :---------------------------------------: | :---------------------------------------: | :---------------------------------------: |
+| Profile | <center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/4d9555ec-e7b8-4377-9fbd-9c691f806770" /> </center> | <center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/de78b3dd-23d8-4ce8-91a8-0d5108f40cca" /></center> | <center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/5f1efd63-f77d-4625-b295-539b10ab2efd"/></center> | <center><img width="150px" height="150px" src="https://github.com/user-attachments/assets/59cc5ad7-54de-45de-8758-aa7f3e61ce81" /></center> |
+| Role    | <center>Team Leader<br>Frontend<br></center> | <center>Frontend</center> | <center>Backend<br>DevOps</center> | <center>Backend<br>DevOps</center> |
+| GitHub  | <center>[@jaehyun-0103](https://github.com/jaehyun-0103)</center> | <center>[@hsyou1129](https://github.com/hsyou1129)</center> | <center>[@Tojaman](https://github.com/Tojaman)</center> | <center>[@Yoosejeong](https://github.com/Yoosejeong)</center> |
 
-</div>
